@@ -14,25 +14,58 @@
         height: 100vh;
         font-family: monospace;
         white-space: pre;
+        color: red;
     }
+
+    #startText {
+        position: absolute;
+        color: white;
+        font-size: 18px;
+        text-align: center;
+    }
+
     #heart {
-        font-size: 12px;
-        line-height: 12px;
+        font-size: 10px;
+        line-height: 10px;
     }
 </style>
 </head>
 <body>
 
+<div id="startText">Chạm vào màn hình để bắt đầu ❤️</div>
 <pre id="heart"></pre>
 
 <script>
     const colors = ["#ff0000", "#ffff00", "#00aaff"];
-    const love = prompt("Enter name:") || "LOVE";
     const heartElement = document.getElementById("heart");
+    const startText = document.getElementById("startText");
+
+    let text = "LOVE";
+    let started = false;
+
+    function startApp() {
+        if (started) return;
+        started = true;
+
+        startText.style.display = "none";
+
+        // Gọi prompt sau khi có tương tác người dùng
+        setTimeout(() => {
+            let input = window.prompt("Nhập tên hoặc số điện thoại:");
+            if (input && input.trim() !== "") {
+                text = input.trim();
+            }
+            setInterval(drawHeart, 200);
+        }, 100);
+    }
+
+    // Bắt cả click và touch (mọi điện thoại)
+    document.addEventListener("click", startApp);
+    document.addEventListener("touchstart", startApp);
 
     function drawHeart() {
         let output = "";
-        
+
         for (let y = 15; y > -15; y--) {
             for (let x = -30; x < 30; x++) {
                 let formula =
@@ -40,8 +73,8 @@
                     (x * 0.05) ** 2 * Math.pow(y * 0.1, 3);
 
                 if (formula <= 0) {
-                    let index = ((x - y) % love.length + love.length) % love.length;
-                    output += love[index];
+                    let index = ((x - y) % text.length + text.length) % text.length;
+                    output += text[index];
                 } else {
                     output += " ";
                 }
@@ -49,12 +82,10 @@
             output += "\n";
         }
 
-        let randomColor = colors[Math.floor(Math.random() * 3)];
+        let randomColor = colors[Math.floor(Math.random() * colors.length)];
         heartElement.style.color = randomColor;
         heartElement.textContent = output;
     }
-
-    setInterval(drawHeart, 200);
 </script>
 
 </body>
